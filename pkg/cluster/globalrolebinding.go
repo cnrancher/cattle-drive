@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"fmt"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 
 	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
@@ -25,9 +26,7 @@ func newGRB(obj v3.GlobalRoleBinding) *GlobalRoleBinding {
 
 // normalize will remove unneeded fields in the spec to make it easier to compare
 func (g *GlobalRoleBinding) normalize() {
-	for _, or := range g.Obj.OwnerReferences {
-		or.UID = ""
-	}
+	g.Obj.SetOwnerReferences([]metav1.OwnerReference{})
 }
 
 func (g *GlobalRoleBinding) Mutate() {

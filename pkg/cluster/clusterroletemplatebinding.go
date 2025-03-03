@@ -25,10 +25,11 @@ type ClusterRoleTemplateBinding struct {
 }
 
 func newCRTB(obj v3.ClusterRoleTemplateBinding, systemUser *v3.User) (*ClusterRoleTemplateBinding, bool) {
-	if obj.Name == creatorClusterOwner || strings.Contains(obj.Name, fleetDefaultOwner) || strings.Contains(obj.Name, systemUser.Name) {
+	if obj.Name == creatorClusterOwner || strings.Contains(obj.Name, fleetDefaultOwner) || strings.Contains(obj.Name, systemUser.Name) || len(obj.OwnerReferences) > 0 {
 		// skipping crtb if its one of the default crtbs created for each cluster
 		return nil, true
 	}
+
 	return &ClusterRoleTemplateBinding{
 		Name:     obj.Name,
 		Obj:      obj.DeepCopy(),
