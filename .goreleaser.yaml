@@ -20,8 +20,8 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X "rancherlabs/cattle-drive/pkg/version.GitCommit={{ .FullCommit }}"
-      - -X "rancherlabs/cattle-drive/pkg/version.Version=v{{ .Version }}"
+      - -X "cnrancher/cattle-drive/pkg/version.GitCommit={{ .FullCommit }}"
+      - -X "cnrancher/cattle-drive/pkg/version.Version=v{{ .Version }}"
 
 archives:
   - format: tar.gz
@@ -40,7 +40,7 @@ archives:
 
 release:
   github:
-    owner: rancherlabs
+    owner: cnrancher
     name: cattle-drive
   prerelease: auto
 
