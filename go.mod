@@ -3,7 +3,7 @@ module rancherlabs/cattle-drive
 go 1.21.4
 
 replace (
-	github.com/rancher/rancher/pkg/apis => github.com/rancher/rancher/pkg/apis v0.0.0-20240205102821-ed248439462a
+	github.com/rancher/rancher/pkg/apis => github.com/cnrancher/pandaria/pkg/apis v0.0.0-20240426020407-2291e6c695ac
 	k8s.io/api => k8s.io/api v0.28.4
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.28.4
 	k8s.io/apimachinery => k8s.io/apimachinery v0.28.4
@@ -14,6 +14,7 @@ replace (
 	k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.28.4
 	k8s.io/code-generator => k8s.io/code-generator v0.28.4
 	k8s.io/component-base => k8s.io/component-base v0.28.4
+	k8s.io/component-helpers => k8s.io/component-helpers v0.28.4
 	k8s.io/controller-manager => k8s.io/controller-manager v0.28.4
 	k8s.io/cri-api => k8s.io/cri-api v0.28.4
 	k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.28.4
@@ -45,6 +46,9 @@ require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/harmonica v0.2.0 // indirect
+	github.com/cnrancher/ack-operator v0.0.5-0.20240301031542-f503388fe440 // indirect
+	github.com/cnrancher/cce-operator v0.4.6 // indirect
+	github.com/cnrancher/tke-operator v0.0.0-20240229091109-62dd98478d65 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
@@ -56,7 +60,8 @@ require (
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
-	github.com/rancher/norman v0.0.0-20230831160711-5de27f66385d // indirect
+	github.com/rancher/norman v0.0.0-20240206180703-6eda4bc94b4c // indirect
+	github.com/rancher/wrangler/v2 v2.1.4 // indirect
 	github.com/rivo/uniseg v0.4.6 // indirect
 	github.com/sahilm/fuzzy v0.1.1-0.20230530133925-c48e322e2a8f // indirect
 )
@@ -69,8 +74,8 @@ require (
 	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
-	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
+	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
+	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
@@ -97,19 +102,19 @@ require (
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/rancher/aks-operator v1.3.0-rc1 // indirect
 	github.com/rancher/eks-operator v1.4.0-rc1 // indirect
-	github.com/rancher/fleet/pkg/apis v0.0.0-20231017140638-93432f288e79 // indirect
+	github.com/rancher/fleet/pkg/apis v0.9.1-rc.2.0.20240213164401-2c6b1019687c // indirect
 	github.com/rancher/gke-operator v1.3.0-rc2 // indirect
-	github.com/rancher/lasso v0.0.0-20230830164424-d684fdeb6f29
-	github.com/rancher/rke v1.5.0 // indirect
+	github.com/rancher/lasso v0.0.0-20240123150939-7055397d6dfa
+	github.com/rancher/rke v1.5.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/urfave/cli/v2 v2.27.1
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/oauth2 v0.15.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/oauth2 v0.16.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
-	golang.org/x/term v0.15.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/term v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
@@ -118,17 +123,17 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.28.6
-	k8s.io/apiextensions-apiserver v0.27.5 // indirect
+	k8s.io/apiextensions-apiserver v0.28.6 // indirect
 	k8s.io/apimachinery v0.28.6
-	k8s.io/apiserver v0.28.4 // indirect
-	k8s.io/component-base v0.28.4 // indirect
+	k8s.io/apiserver v0.28.6 // indirect
+	k8s.io/component-base v0.28.6 // indirect
 	k8s.io/klog v1.0.0 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
-	k8s.io/kube-aggregator v0.25.4 // indirect
+	k8s.io/kube-aggregator v0.28.6 // indirect
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
-	k8s.io/kubernetes v1.27.9 // indirect
+	k8s.io/kubernetes v1.28.6 // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
-	sigs.k8s.io/cli-utils v0.27.0 // indirect
+	sigs.k8s.io/cli-utils v0.28.0 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect

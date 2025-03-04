@@ -79,6 +79,7 @@ func newClusterList() []list.Item {
 		items = append(items, item{title: "Users", desc: "Rancher Users", objType: constants.UsersType, obj: nil})
 		items = append(items, item{title: "RoleTemplates", desc: "Rancher RoleTemplates", objType: constants.RoleTemplatesType, obj: nil})
 		items = append(items, item{title: "GlobalRoles", desc: "Rancher GlobalRoles", objType: constants.GlobalRolesType, obj: nil})
+		items = append(items, item{title: "GlobalRoleBindings", desc: "Rancher GlobalRoleBindings", objType: constants.GlobalRoleBindingsType, obj: nil})
 	}
 	return items
 }

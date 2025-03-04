@@ -7,6 +7,8 @@ import (
 	"io"
 	"rancherlabs/cattle-drive/pkg/client"
 	"reflect"
+	"strings"
+	"time"
 
 	v1catalog "github.com/rancher/rancher/pkg/apis/catalog.cattle.io/v1"
 	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
@@ -27,11 +29,12 @@ type ToMigrate struct {
 	Projects []*Project
 	CRTBs    []*ClusterRoleTemplateBinding
 	// apps related objects
-	ClusterRepos  []*ClusterRepo
-	Apps          []*App
-	Users         []*User
-	RoleTemplates []*RoleTemplate
-	GlobalRoles   []*GlobalRole
+	ClusterRepos       []*ClusterRepo
+	Apps               []*App
+	Users              []*User
+	RoleTemplates      []*RoleTemplate
+	GlobalRoles        []*GlobalRole
+	GlobalRoleBindings []*GlobalRoleBinding
 }
 
 // Populate will fill in the objects to be migrated
@@ -63,7 +66,7 @@ func (c *Cluster) Populate(ctx context.Context, client *client.Clients) error {
 				// use the cluster creator user as the default admin for any new project
 				c.DefaultAdmin = user.DeepCopy()
 			}
-			if user.Username == "admin" || user.Username == "" {
+			if user.Username == "admin" || isSystem(user.PrincipalIDs) {
 				continue
 			}
 			var grbList []*GlobalRoleBinding
@@ -116,6 +119,20 @@ func (c *Cluster) Populate(ctx context.Context, client *client.Clients) error {
 			r := newGR(gr)
 			r.normalize()
 			grList = append(grList, r)
+		}
+	}
+
+	// globalrolebinding
+	if err := client.GlobalRoleBindings.List(ctx, "", &grbs, v1.ListOptions{}); err != nil {
+		return err
+	}
+	var grbList []*GlobalRoleBinding
+	for _, grb := range grbs.Items {
+		if c.ExternalRancher && grb.GroupPrincipalName != "" {
+			// populate globalrolebinding
+			r := newGRB(grb)
+			r.normalize()
+			grbList = append(grbList, r)
 		}
 	}
 
@@ -195,12 +212,13 @@ func (c *Cluster) Populate(ctx context.Context, client *client.Clients) error {
 	}
 
 	c.ToMigrate = ToMigrate{
-		Projects:      pList,
-		CRTBs:         crtbList,
-		ClusterRepos:  reposList,
-		Users:         usersList,
-		RoleTemplates: roleTemplateList,
-		GlobalRoles:   grList,
+		Projects:           pList,
+		CRTBs:              crtbList,
+		ClusterRepos:       reposList,
+		Users:              usersList,
+		RoleTemplates:      roleTemplateList,
+		GlobalRoles:        grList,
+		GlobalRoleBindings: grbList,
 	}
 	return nil
 }
@@ -232,11 +250,20 @@ func (c *Cluster) Compare(ctx context.Context, tc *Cluster) error {
 		}
 	}
 
-	// roleTemplates
+	// globalRoles
 	for _, sGlobalRole := range c.ToMigrate.GlobalRoles {
 		for _, tGlobalRole := range tc.ToMigrate.GlobalRoles {
 			if sGlobalRole.Name == tGlobalRole.Name && sGlobalRole.Obj.DisplayName == tGlobalRole.Obj.DisplayName {
 				sGlobalRole.Migrated = true
+			}
+		}
+	}
+
+	// globalRoleBindings
+	for _, sGlobalRoleBinding := range c.ToMigrate.GlobalRoleBindings {
+		for _, tGlobalRoleBinding := range tc.ToMigrate.GlobalRoleBindings {
+			if sGlobalRoleBinding.Name == tGlobalRoleBinding.Name && sGlobalRoleBinding.Obj.GroupPrincipalName == tGlobalRoleBinding.Obj.GroupPrincipalName {
+				sGlobalRoleBinding.Migrated = true
 			}
 		}
 	}
@@ -334,6 +361,11 @@ func (c *Cluster) Status(ctx context.Context) error {
 		for _, g := range c.ToMigrate.GlobalRoles {
 			print(g.Obj.DisplayName, g.Migrated, g.Diff, 0)
 		}
+
+		fmt.Printf("GlobalRoleBinding status:\n")
+		for _, g := range c.ToMigrate.GlobalRoleBindings {
+			print(g.Obj.GroupPrincipalName, g.Migrated, g.Diff, 0)
+		}
 	}
 
 	fmt.Printf("Project status:\n")
@@ -412,6 +444,19 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 				fmt.Fprintf(w, "Done.\n")
 			}
 		}
+
+		// globalRoleBindings
+		for _, grb := range c.ToMigrate.GlobalRoleBindings {
+			if !grb.Migrated {
+				fmt.Fprintf(w, "- migrating GlobalRoleBinding [%s]... ", grb.Obj.GroupPrincipalName)
+
+				grb.Mutate()
+				if err := client.GlobalRoleBindings.Create(ctx, "", grb.Obj, nil, v1.CreateOptions{}); err != nil {
+					return err
+				}
+				fmt.Fprintf(w, "Done.\n")
+			}
+		}
 	}
 
 	for _, p := range c.ToMigrate.Projects {
@@ -428,6 +473,8 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 			for _, ns := range p.Namespaces {
 				ns.ProjectName = p.Obj.Name
 			}
+
+			time.Sleep(1 * time.Second)
 			fmt.Fprintf(w, "Done.\n")
 		}
 
@@ -505,4 +552,14 @@ func NewProjectName(ctx context.Context, targetClusterName, oldProjectName strin
 		}
 	}
 	return "", errors.New("failed to find project with the name " + oldProjectName)
+}
+
+func isSystem(principalIDs []string) bool {
+	for _, id := range principalIDs {
+		if strings.Contains(id, "system://") {
+			return true
+		}
+	}
+
+	return false
 }
