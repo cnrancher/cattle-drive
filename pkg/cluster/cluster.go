@@ -4,16 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	v1catalog "github.com/rancher/rancher/pkg/apis/catalog.cattle.io/v1"
+	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"io"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"rancherlabs/cattle-drive/pkg/client"
 	"reflect"
 	"strings"
-	"time"
-
-	v1catalog "github.com/rancher/rancher/pkg/apis/catalog.cattle.io/v1"
-	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Cluster struct {
@@ -473,9 +471,24 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 			for _, ns := range p.Namespaces {
 				ns.ProjectName = p.Obj.Name
 			}
-
-			time.Sleep(1 * time.Second)
 			fmt.Fprintf(w, "Done.\n")
+		} else {
+			var projectList v3.ProjectList
+			if err := client.Projects.List(ctx, c.Obj.Name, &projectList, v1.ListOptions{}); err != nil {
+				return err
+			}
+
+			for _, project := range projectList.Items {
+				if project.Spec.DisplayName == p.Name {
+					// set ProjectName for all ns and prtbs for this project
+					for _, sPRTB := range p.PRTBs {
+						sPRTB.ProjectName = project.Name
+					}
+					for _, ns := range p.Namespaces {
+						ns.ProjectName = project.Name
+					}
+				}
+			}
 		}
 
 		for _, prtb := range p.PRTBs {
