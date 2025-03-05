@@ -31,7 +31,11 @@ func (u *User) Mutate() {
 	u.Obj.SetName(u.Name)
 	u.Obj.SetFinalizers(nil)
 	u.Obj.SetResourceVersion("")
-	u.Obj.SetLabels(nil)
+	for key, value := range u.Obj.Labels {
+		if value != "hashed-principal-name" {
+			delete(u.Obj.Labels, key)
+		}
+	}
 	for annotation := range u.Obj.Annotations {
 		if strings.Contains(annotation, lifeCycleAnnotationPrefix) {
 			delete(u.Obj.Annotations, annotation)
