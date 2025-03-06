@@ -45,7 +45,10 @@ func (g *GlobalRoleBinding) Mutate() {
 }
 
 func (g *GlobalRoleBinding) SetDescription(user v3.User) error {
-
-	g.Description = fmt.Sprintf("%s permission for user %s", g.Obj.GlobalRoleName, user.Username)
+	name := user.Username
+	if name == "" {
+		name = user.DisplayName
+	}
+	g.Description = fmt.Sprintf("%s permission for user %s", g.Obj.GlobalRoleName, name)
 	return nil
 }

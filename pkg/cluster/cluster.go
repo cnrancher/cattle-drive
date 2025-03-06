@@ -341,7 +341,12 @@ func (c *Cluster) Status(ctx context.Context) error {
 	if c.ExternalRancher {
 		fmt.Printf("Users status:\n")
 		for _, u := range c.ToMigrate.Users {
-			print(u.Obj.Username, u.Migrated, u.Diff, 0)
+			if u.Obj.Username != "" {
+				print(u.Obj.Username, u.Migrated, u.Diff, 0)
+			} else {
+				print(u.Obj.DisplayName, u.Migrated, u.Diff, 0)
+			}
+
 			if len(u.GlobalRoleBindings) > 0 {
 				fmt.Printf("  -> user permissions:\n")
 			}
@@ -426,7 +431,11 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 		// users
 		for _, u := range c.ToMigrate.Users {
 			if !u.Migrated {
-				fmt.Fprintf(w, "- migrating User [%s]... ", u.Obj.Username)
+				if u.Obj.Username != "" {
+					fmt.Fprintf(w, "- migrating User [%s]... ", u.Obj.Username)
+				} else {
+					fmt.Fprintf(w, "- migrating User [%s]... ", u.Obj.DisplayName)
+				}
 
 				u.Mutate()
 				if err := client.Users.Create(ctx, "", u.Obj, nil, v1.CreateOptions{}); err != nil {
