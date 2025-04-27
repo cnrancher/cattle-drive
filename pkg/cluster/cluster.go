@@ -483,7 +483,7 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 			fmt.Fprintf(w, "Done.\n")
 		} else {
 			var projectList v3.ProjectList
-			if err := client.Projects.List(ctx, c.Obj.Name, &projectList, v1.ListOptions{}); err != nil {
+			if err := client.Projects.List(ctx, tc.Obj.Name, &projectList, v1.ListOptions{}); err != nil {
 				return err
 			}
 
@@ -522,7 +522,7 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 			if !ns.Migrated {
 				fmt.Fprintf(w, "  - migrating Namespace [%s]... ", ns.Name)
 				ns.Mutate(tc.Obj.Name, ns.ProjectName)
-				if _, err := tc.Client.Namespace.Create(ns.Obj); err != nil {
+				if _, err := tc.Client.Namespace.Create(ns.Obj); err != nil && !apierrors.IsAlreadyExists(err) {
 					return err
 				}
 				fmt.Fprintf(w, "Done.\n")
