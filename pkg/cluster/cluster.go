@@ -4,11 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"rancherlabs/cattle-drive/pkg/client"
-	"reflect"
-	"strings"
-
 	v1catalog "github.com/rancher/rancher/pkg/apis/catalog.cattle.io/v1"
 	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"io"

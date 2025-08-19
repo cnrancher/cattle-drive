@@ -3,7 +3,7 @@ module rancherlabs/cattle-drive
 go 1.24.0
 
 replace (
-	github.com/rancher/rancher/pkg/apis => github.com/cnrancher/pandaria/pkg/apis v0.0.0-20240426020407-2291e6c695ac
+	github.com/rancher/rancher/pkg/apis => github.com/cnrancher/pandaria/pkg/apis v0.0.0-20250811090627-5376b5baa379
 	k8s.io/api => k8s.io/api v0.32.2
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.32.2
 	k8s.io/apimachinery => k8s.io/apimachinery v0.32.2
@@ -15,11 +15,11 @@ replace (
 	k8s.io/code-generator => k8s.io/code-generator v0.32.2
 	k8s.io/component-base => k8s.io/component-base v0.32.2
 	k8s.io/component-helpers => k8s.io/component-helpers v0.32.2
-    k8s.io/controller-manager => k8s.io/controller-manager v0.32.2
+	k8s.io/controller-manager => k8s.io/controller-manager v0.32.2
 	k8s.io/cri-api => k8s.io/cri-api v0.32.2
 	k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.32.2
 	k8s.io/dynamic-resource-allocation => k8s.io/dynamic-resource-allocation v0.32.2
-    k8s.io/endpointslice => k8s.io/endpointslice v0.32.2
+	k8s.io/endpointslice => k8s.io/endpointslice v0.32.2
 	k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.32.2
 	k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.32.2
 	k8s.io/kube-proxy => k8s.io/kube-proxy v0.32.2
@@ -46,9 +46,9 @@ require (
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/harmonica v0.2.0 // indirect
-	github.com/cnrancher/ack-operator v0.0.5-0.20240301031542-f503388fe440 // indirect
-	github.com/cnrancher/cce-operator v0.4.6 // indirect
-	github.com/cnrancher/tke-operator v0.0.0-20240229091109-62dd98478d65 // indirect
+	github.com/cnrancher/ack-operator v0.0.5-0.20250401014136-d5f811965a0c // indirect
+	github.com/cnrancher/cce-operator v0.7.0 // indirect
+	github.com/cnrancher/tke-operator v0.0.0-20250217080435-aa3d048bb4c7 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
@@ -71,6 +71,7 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	go.opentelemetry.io/otel v1.34.0 // indirect
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
+	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 )
 
@@ -106,22 +107,22 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	github.com/rancher/aks-operator v1.11.3 // indirect
-	github.com/rancher/eks-operator v1.11.3 // indirect
+	github.com/rancher/aks-operator v1.11.4 // indirect
+	github.com/rancher/eks-operator v1.11.4 // indirect
 	github.com/rancher/fleet/pkg/apis v0.12.3 // indirect
-	github.com/rancher/gke-operator v1.11.3 // indirect
+	github.com/rancher/gke-operator v1.11.4 // indirect
 	github.com/rancher/lasso v0.2.2
-	github.com/rancher/rke v1.8.4 // indirect
+	github.com/rancher/rke v1.8.5 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/urfave/cli/v2 v2.27.1
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/term v0.33.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
@@ -139,5 +140,5 @@ require (
 	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979 // indirect
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.3 // indirect
-	sigs.k8s.io/yaml v1.4.0 // indirect
+	sigs.k8s.io/yaml v1.5.0 // indirect
 )
