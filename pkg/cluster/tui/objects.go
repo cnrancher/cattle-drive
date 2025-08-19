@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
+	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -258,8 +259,16 @@ func (m *Objects) migrateObject(ctx context.Context, i item) (tea.Msg, error) {
 	case constants.PRTBType:
 		if i.status == constants.NotMigratedStatus {
 			prtb := i.obj.(*cluster.ProjectRoleTemplateBinding)
-			prtb.Mutate(constants.TC.Obj.Name, prtb.ProjectName)
-			if err := cl.ProjectRoleTemplateBindings.Create(ctx, prtb.ProjectName, prtb.Obj, nil, v1.CreateOptions{}); err != nil {
+			prtb.Mutate(constants.TC.Obj.Name, prtb.ProjectName, false)
+			var project v3.Project
+			if err := cl.Projects.Get(ctx, constants.SC.Obj.Name, prtb.ProjectName, &project, v1.GetOptions{}); err != nil {
+				return nil, err
+			}
+			ns := prtb.ProjectName
+			if strings.HasPrefix(project.Status.BackingNamespace, "c-") {
+				ns = constants.SC.Obj.Name + "-" + prtb.ProjectName
+			}
+			if err := cl.ProjectRoleTemplateBindings.Create(ctx, ns, prtb.Obj, nil, v1.CreateOptions{}); err != nil {
 				return nil, err
 			}
 			objectMigrated = true

@@ -42,10 +42,13 @@ func (p *ProjectRoleTemplateBinding) normalize() {
 	}
 }
 
-func (p *ProjectRoleTemplateBinding) Mutate(clusterName, projectName string) {
+func (p *ProjectRoleTemplateBinding) Mutate(clusterName, projectName string, backingNamespace bool) {
 	p.Obj.ProjectName = clusterName + ":" + projectName
 	p.Obj.SetName(p.Name)
 	p.Obj.SetNamespace(projectName)
+	if backingNamespace {
+		p.Obj.SetNamespace(clusterName + "-" + projectName)
+	}
 	p.Obj.SetFinalizers(nil)
 	p.Obj.SetResourceVersion("")
 	p.Obj.SetLabels(nil)

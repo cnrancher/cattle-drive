@@ -4,6 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"rancherlabs/cattle-drive/pkg/client"
+	"reflect"
+	"strings"
+
 	v1catalog "github.com/rancher/rancher/pkg/apis/catalog.cattle.io/v1"
 	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"io"
@@ -150,7 +155,11 @@ func (c *Cluster) Populate(ctx context.Context, client *client.Clients) error {
 		//	continue
 		//}
 		// prtbs
-		if err := client.ProjectRoleTemplateBindings.List(ctx, p.Name, &projectRoleTemplateBindings, v1.ListOptions{}); err != nil {
+		namespace := p.Name
+		if strings.HasPrefix(p.Status.BackingNamespace, "c-") {
+			namespace = c.Obj.Name + "-" + p.Name
+		}
+		if err := client.ProjectRoleTemplateBindings.List(ctx, namespace, &projectRoleTemplateBindings, v1.ListOptions{}); err != nil {
 			return err
 		}
 		prtbList := []*ProjectRoleTemplateBinding{}
@@ -511,8 +520,15 @@ func (c *Cluster) Migrate(ctx context.Context, client *client.Clients, tc *Clust
 						return errors.New("user " + userID + " does not exists, please migrate user first")
 					}
 				}
-				prtb.Mutate(tc.Obj.Name, prtb.ProjectName)
-				if err := client.ProjectRoleTemplateBindings.Create(ctx, prtb.ProjectName, prtb.Obj, nil, v1.CreateOptions{}); err != nil {
+
+				var backingNamespace bool
+				namespace := prtb.ProjectName
+				if strings.HasPrefix(p.Obj.Status.BackingNamespace, "c-") {
+					namespace = tc.Obj.Name + "-" + prtb.ProjectName
+					backingNamespace = true
+				}
+				prtb.Mutate(tc.Obj.Name, prtb.ProjectName, backingNamespace)
+				if err := client.ProjectRoleTemplateBindings.Create(ctx, namespace, prtb.Obj, nil, v1.CreateOptions{}); err != nil {
 					return err
 				}
 				fmt.Fprintf(w, "Done.\n")
